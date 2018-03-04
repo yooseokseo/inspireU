@@ -1,0 +1,19 @@
+{
+  "name": "inspireu",
+  "version": "1.0.0",
+  "description": "RESTful API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yooseokseo/inspireU.git"
+  },
+  "author": "yooseok seo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yooseokseo/inspireU/issues"
+  },
+  "homepage": "https://github.com/yooseokseo/inspireU#readme"
+}
