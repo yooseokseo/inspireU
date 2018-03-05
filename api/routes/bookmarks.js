@@ -10,14 +10,12 @@ router.get('/', (req, res, next) =>{
 });
 
 router.post('/', (req, res, next) =>{
-  const bookmark = new Order({
+  const bookmark = new Bookmark({
     _id: mongoose.Types.ObjectId(),
     inspirationId: req.body.inspirationId
 
   });
-  bookmark
-  .save()
-  .exec()
+  bookmark.save()
   .then( reusult => {
     console.log(result);
     res.status(201).json(result);
@@ -28,10 +26,6 @@ router.post('/', (req, res, next) =>{
       error:err
     });
   });
-    res.status(201).json({
-      message: 'bookmarks were created',
-      bookmark : bookmark
-    })
 });
 
 router.get('/:bookmarkId', (req, res, next) =>{

@@ -9,6 +9,7 @@ const inspirationsRoutes = require('./api/routes/inspirations');
 const bookmarksRoutes = require('./api/routes/bookmarks');
 
 mongoose.connect('mongodb://admin:admin@inspireu-shard-00-00-j8htx.mongodb.net:27017,inspireu-shard-00-01-j8htx.mongodb.net:27017,inspireu-shard-00-02-j8htx.mongodb.net:27017/test?ssl=true&replicaSet=inspireU-shard-0&authSource=admin');
+mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
