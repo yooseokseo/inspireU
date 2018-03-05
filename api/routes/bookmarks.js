@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const Bookmark = require('../models/bookmark');
+const mongoose = require("mongoose");
 
 router.get('/', (req, res, next) =>{
     res.status(200).json({
@@ -8,9 +10,24 @@ router.get('/', (req, res, next) =>{
 });
 
 router.post('/', (req, res, next) =>{
-  const bookmark ={
-    inspirationId : req.body.inspirationId
-  }
+  const bookmark = new Order({
+    _id: mongoose.Types.ObjectId(),
+    inspirationId: req.body.inspirationId
+
+  });
+  bookmark
+  .save()
+  .exec()
+  .then( reusult => {
+    console.log(result);
+    res.status(201).json(result);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({
+      error:err
+    });
+  });
     res.status(201).json({
       message: 'bookmarks were created',
       bookmark : bookmark
