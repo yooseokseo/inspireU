@@ -3,13 +3,30 @@ const router = express.Router();
 const Inspiration = require('../models/inspiration');
 const mongoose = require("mongoose");
 
-//show inspirations
+//show all inspirations
 router.get('/', (req, res, next) =>{
   Inspiration.find()
+    // what kind of attr want to fetch?
+    .select('title caption category mediaType _id')
     .exec()
     .then(docs =>{
-      console.log(docs);
-      res.status(200).json(docs);
+      const response = {
+        count: docs.length,
+        inspirations: docs.map(doc =>{
+          return {
+            titie : doc.title,
+            caption : doc.caption,
+            category: doc.category,
+            mediaType: doc.mediaType,
+            _id : doc._id,
+            request: {
+              type: 'GET',
+              url: 'http://localhost:3000/inspirations/' + doc._id
+            }
+          }
+        })
+      };
+      res.status(200).json(response);
     })
     .catch(err => {
       console.log(err);
@@ -19,7 +36,7 @@ router.get('/', (req, res, next) =>{
     });
 });
 
-//create inspiration
+//create an inspiration
 router.post('/', (req, res, next) =>{
   const inspiration = new Inspiration({
     _id: new mongoose.Types.ObjectId(),
@@ -29,11 +46,22 @@ router.post('/', (req, res, next) =>{
     category: req.body.category,
     mediaType: req.body.mediaType
   });
-  inspiration.save().then(result =>{
+  inspiration.save()
+  .then(result =>{
     console.log(result);
     res.status(201).json({
-      message: 'inspirations were created',
-      createdInspiration: result
+      message: 'Created inspiration successfully',
+      createdInspiration: {
+        title : result.title,
+        caption : result.caption,
+        description : result.description,
+        category: result.category,
+        mediaType: result.mediaType,
+        request:{
+          type: 'GET',
+          url: 'http://localhost:3000/inspirations/' + result._id
+        }
+      }
     })
   }).catch(err => {
     console.log(err);
@@ -44,14 +72,23 @@ router.post('/', (req, res, next) =>{
 
 });
 
-//show specific inspiration by Id
+//show a specific inspiration by Id
 router.get('/:inspirationId', (req, res, next) =>{
   const id = req.params.inspirationId;
-  Inspiration.findById(id).exec()
+  Inspiration.findById(id)
+    .select('title caption description category mediaType _id')
+    .exec()
     .then(doc => {
       console.log(doc);
       if (doc){
-        res.status(200).json(doc);
+        res.status(200).json({
+          inspiration: doc,
+          request:{
+            type: 'GET',
+            description: 'Show All Inspirations',
+            url: 'http://localhost:3000/inspirations'
+          }
+        });
       }
       else {
         res.status(404).json({message: 'No valid entry found for provided ID'});
@@ -63,7 +100,7 @@ router.get('/:inspirationId', (req, res, next) =>{
   });
 });
 
-//update specific inspiration by Id
+//update a specific inspiration by Id
 router.patch('/:inspirationId', (req, res, next) =>{
   const id = req.params.inspirationId;
   const updatedOps = {};
@@ -73,7 +110,13 @@ router.patch('/:inspirationId', (req, res, next) =>{
   Inspiration.update({_id: id}, {$set: updatedOps})
   .exec()
   .then(result => {
-    res.status(200).json(result);
+    res.status(200).json({
+      message: 'Inspiration updated',
+      request: {
+        type:'GET',
+        url:'http://localhost:3000/inspirations/' + id
+      }
+    });
   })
   .catch(err => {
     console.log(err);
@@ -88,7 +131,20 @@ router.delete('/:inspirationId', (req, res, next) =>{
     Inspiration.remove({_id: id})
     .exec()
     .then(result => {
-      res.status(200).json(result);
+      res.status(200).json({
+        message: 'Inspiration deleted',
+        request: {
+          type: 'POST',
+          url: 'http://localhost:3000/inspirations',
+          body: {
+            title : 'String',
+            caption : 'String',
+            description :'String',
+            category: 'String',
+            mediaType:  'String'
+          }
+        }
+      });
     })
     .catch(err => {
       console.log(err);

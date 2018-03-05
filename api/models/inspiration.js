@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const inspirationSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  title : String,
-  caption : String,
-  description : String,
-  category: String,
-  mediaType: String
+  title : { type: String, required: true},
+  caption : { type: String, required: true},
+  description : { type: String, required: true},
+  category: { type: String, required: true},
+  mediaType: { type: String, required: true}
 });
 
 module.exports = mongoose.model('Inspiration', inspirationSchema);
