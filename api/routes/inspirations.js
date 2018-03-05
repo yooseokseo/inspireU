@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 router.get('/', (req, res, next) =>{
   Inspiration.find()
     // what kind of attr want to fetch?
-    .select('title caption category mediaType _id')
+    .select('title caption category mediaType _id url')
     .exec()
     .then(docs =>{
       const response = {
@@ -18,6 +18,7 @@ router.get('/', (req, res, next) =>{
             caption : doc.caption,
             category: doc.category,
             mediaType: doc.mediaType,
+            url: doc.url,
             _id : doc._id,
             request: {
               type: 'GET',
@@ -38,13 +39,15 @@ router.get('/', (req, res, next) =>{
 
 //create an inspiration
 router.post('/', (req, res, next) =>{
+  const id = new mongoose.Types.ObjectId();
   const inspiration = new Inspiration({
-    _id: new mongoose.Types.ObjectId(),
+    _id: id,
     title : req.body.title,
     caption : req.body.caption,
     description : req.body.description,
     category: req.body.category,
-    mediaType: req.body.mediaType
+    mediaType: req.body.mediaType,
+    url : 'http://localhost:3000/inspirations/' + id
   });
   inspiration.save()
   .then(result =>{
@@ -57,6 +60,7 @@ router.post('/', (req, res, next) =>{
         description : result.description,
         category: result.category,
         mediaType: result.mediaType,
+        url : 'http://localhost:3000/inspirations/' + result._id,
         request:{
           type: 'GET',
           url: 'http://localhost:3000/inspirations/' + result._id
@@ -76,7 +80,7 @@ router.post('/', (req, res, next) =>{
 router.get('/:inspirationId', (req, res, next) =>{
   const id = req.params.inspirationId;
   Inspiration.findById(id)
-    .select('title caption description category mediaType _id')
+    .select('title caption description category mediaType _id url')
     .exec()
     .then(doc => {
       console.log(doc);
@@ -134,15 +138,8 @@ router.delete('/:inspirationId', (req, res, next) =>{
       res.status(200).json({
         message: 'Inspiration deleted',
         request: {
-          type: 'POST',
-          url: 'http://localhost:3000/inspirations',
-          body: {
-            title : 'String',
-            caption : 'String',
-            description :'String',
-            category: 'String',
-            mediaType:  'String'
-          }
+          type: 'GET',
+          url: 'http://localhost:3000/inspirations'
         }
       });
     })

@@ -9,6 +9,7 @@ const Inspiration = require('../models/inspiration');
 router.get('/', (req, res, next) => {
   Bookmark.find()
     .select('_id inspiration')
+    .populate('inspiration')
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -43,8 +44,8 @@ router.post('/', (req, res, next) => {
       }
       const bookmark = new Bookmark({
         _id: mongoose.Types.ObjectId(),
-        inspiration: req.body.inspirationId
-
+        inspiration: req.body.inspirationId,
+        url : 'http://localhost:3000/inspirations/' + req.body.inspirationId
       });
       return bookmark.save()
 
@@ -75,8 +76,14 @@ router.post('/', (req, res, next) => {
 
 router.get('/:bookmarkId', (req, res, next) => {
   Bookmark.findById(req.params.bookmarkId)
+  .populate('inspiration')
   .exec()
   .then(bookmark => {
+    if(!bookmark) {
+      return res.status(404).json({
+        message: "Bookmark not found"
+      });
+    }
     res.status(200).json({
       bookmark : bookmark,
       request: {
@@ -93,10 +100,22 @@ router.get('/:bookmarkId', (req, res, next) => {
 });
 
 router.delete('/:bookmarkId', (req, res, next) => {
-  res.status(200).json({
-    message: 'bookmarks were deleted',
-    bookMarkId: req.params.bookmarkId
+  Bookmark.remove({_id: req.params.bookmarkId})
+  .exec()
+  .then(result => {
+    res.status(200).json({
+      message: 'Bookmark deleted',
+      request: {
+        type: "GET",
+        url:'http://localhost:3000/bookmarks'
+      }
+    })
   })
+  .catch(err => {
+    res.status(500).json({
+      error: err
+    });
+  });
 });
 
 module.exports = router;
