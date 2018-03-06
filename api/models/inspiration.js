@@ -7,7 +7,8 @@ const inspirationSchema = mongoose.Schema({
   description : { type: String, required: true},
   category: { type: String, required: true},
   mediaType: { type: String, required: true},
-  url:  {type: String, required: true}
+  url:  {type: String, required: true},
+  inspirationFilePath: {type:String, required:true}
 });
 
 module.exports = mongoose.model('Inspiration', inspirationSchema);

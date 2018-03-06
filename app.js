@@ -12,6 +12,7 @@ mongoose.connect('mongodb://admin:admin@inspireu-shard-00-00-j8htx.mongodb.net:2
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
