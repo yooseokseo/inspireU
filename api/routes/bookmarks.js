@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
+const checkAuth = require('../middleware/check-auth');
 
 const Bookmark = require('../models/bookmark');
 const Inspiration = require('../models/inspiration');
 
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth,(req, res, next) => {
   Bookmark.find()
     .select('_id inspiration')
     .populate('inspiration')
@@ -34,7 +35,7 @@ router.get('/', (req, res, next) => {
 
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
   Inspiration.findById(req.body.inspirationId)
     .then(inspiration => {
       if (!inspiration) {
@@ -74,7 +75,7 @@ router.post('/', (req, res, next) => {
 
 });
 
-router.get('/:bookmarkId', (req, res, next) => {
+router.get('/:bookmarkId',checkAuth, (req, res, next) => {
   Bookmark.findById(req.params.bookmarkId)
   .populate('inspiration')
   .exec()
@@ -99,7 +100,7 @@ router.get('/:bookmarkId', (req, res, next) => {
   });
 });
 
-router.delete('/:bookmarkId', (req, res, next) => {
+router.delete('/:bookmarkId',checkAuth, (req, res, next) => {
   Bookmark.remove({_id: req.params.bookmarkId})
   .exec()
   .then(result => {

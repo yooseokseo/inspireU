@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
+//router.get("/", (req))
+
 router.post("/signup", (req, res, next) => {
   User.find({ email: req.body.email })
     .exec()
@@ -25,6 +27,7 @@ router.post("/signup", (req, res, next) => {
               _id: new mongoose.Types.ObjectId(),
               email: req.body.email,
               password: hash
+              //bookmarks: []
             });
             user
               .save()

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 
 
 const storage = multer.diskStorage({
@@ -76,7 +77,7 @@ router.get('/', (req, res, next) =>{
 });
 
 //create an inspiration
-router.post('/', upload.single('inspirationFile'), (req, res, next) =>{
+router.post('/', upload.single('inspirationFile'),checkAuth, (req, res, next) =>{
   console.log(req.file);
   const id = new mongoose.Types.ObjectId();
   const inspiration = new Inspiration({
@@ -146,7 +147,8 @@ router.get('/:inspirationId', (req, res, next) =>{
 });
 
 //update a specific inspiration by Id
-router.patch('/:inspirationId', (req, res, next) =>{
+router.patch('/:inspirationId', checkAuth,(req, res, next) =>{
+  // TODO: need to check either this inspiration is made by who?
   const id = req.params.inspirationId;
   const updatedOps = {};
   for (const ops of req.body){
@@ -171,7 +173,9 @@ router.patch('/:inspirationId', (req, res, next) =>{
 });
 
 //delete specific inspiration by Id
-router.delete('/:inspirationId', (req, res, next) =>{
+router.delete('/:inspirationId',checkAuth, (req, res, next) =>{
+  // TODO: need to delete only a user made
+  // so when a user made new inspiration we need to store who the author is
   const id = req.params.inspirationId;
     Inspiration.remove({_id: id})
     .exec()
