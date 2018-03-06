@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const inspirationsRoutes = require('./api/routes/inspirations');
 const bookmarksRoutes = require('./api/routes/bookmarks');
+const userRoutes = require('./api/routes/user');
 
 mongoose.connect('mongodb://admin:admin@inspireu-shard-00-00-j8htx.mongodb.net:27017,inspireu-shard-00-01-j8htx.mongodb.net:27017,inspireu-shard-00-02-j8htx.mongodb.net:27017/test?ssl=true&replicaSet=inspireU-shard-0&authSource=admin');
 mongoose.Promise = global.Promise;
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 });
 app.use('/inspirations', inspirationsRoutes);
 app.use('/bookmarks', bookmarksRoutes);
+app.use('/user', userRoutes);
 
 app.use((req, res, next)=>{
   const error = new Error('Not found');

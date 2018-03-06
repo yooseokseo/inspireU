@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
-//const multer = require('multer');
+const multer = require('multer');
 
-/*
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, './uploads/');
@@ -34,8 +34,7 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-*/
-//const upload = multer({dest: 'uploads/'});
+
 
 
 const Inspiration = require('../models/inspiration');
@@ -44,8 +43,8 @@ const Inspiration = require('../models/inspiration');
 router.get('/', (req, res, next) =>{
   Inspiration.find()
     // what kind of attr want to fetch?
-    //.select('title caption category mediaType _id url inspirationFilePath')
-    .select('title caption category mediaType _id url')
+    .select('title caption category mediaType _id url inspirationFilePath')
+
     .exec()
     .then(docs =>{
       const response = {
@@ -56,7 +55,7 @@ router.get('/', (req, res, next) =>{
             caption : doc.caption,
             category: doc.category,
             mediaType: doc.mediaType,
-            //inspirationFilePath: doc.inspirationFilePath,
+            inspirationFilePath: doc.inspirationFilePath,
             url: doc.url,
             _id : doc._id,
             request: {
@@ -77,9 +76,8 @@ router.get('/', (req, res, next) =>{
 });
 
 //create an inspiration
-//router.post('/', upload.single('inspirationImage'), (req, res, next) =>{
-router.post('/', (req, res, next) =>{
-  console.log(req.body.title);
+router.post('/', upload.single('inspirationFile'), (req, res, next) =>{
+  console.log(req.file);
   const id = new mongoose.Types.ObjectId();
   const inspiration = new Inspiration({
     _id: id,
@@ -87,9 +85,8 @@ router.post('/', (req, res, next) =>{
     caption : req.body.caption,
     description : req.body.description,
     category: req.body.category,
-    //mediaType: req.file.mimetype,
-    mediaType: req.body.mediaType,
-    //inspirationFilePath : req.file.path,
+    mediaType: req.file.mimetype,
+    inspirationFilePath : req.file.path,
     url : 'http://localhost:3000/inspirations/' + id
   });
   inspiration.save()
@@ -103,7 +100,7 @@ router.post('/', (req, res, next) =>{
         description : result.description,
         category: result.category,
         mediaType: result.mediaType,
-        //inspirationFilePath : req.file.path,
+        inspirationFilePath : req.file.path,
         url : 'http://localhost:3000/inspirations/' + result._id,
         request:{
           type: 'GET',
@@ -124,8 +121,7 @@ router.post('/', (req, res, next) =>{
 router.get('/:inspirationId', (req, res, next) =>{
   const id = req.params.inspirationId;
   Inspiration.findById(id)
-    //.select('title caption description category mediaType _id url inspirationFilePath')
-    .select('title caption description category mediaType _id url')
+    .select('title caption description category mediaType _id url inspirationFilePath')
     .exec()
     .then(doc => {
       console.log(doc);
